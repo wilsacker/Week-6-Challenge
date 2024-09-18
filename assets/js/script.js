@@ -19,3 +19,4 @@ function fetchWeather() {
       console.error(err);
     });
 }
+
