@@ -132,8 +132,9 @@ function renderItems(city, data) {
 
 function renderCurrentWeather(city, weather) {
     //console.log('Weather Data:', weather);  // Check if this logs the correct data
-  const date = dayjs().format("M/D/YYYY");
-  const tempF = weather.main.temp;
+    const date = dayjs().format("M/D/YYYY");
+    const tempK = weather.main.temp; // Get temp in Kelvin
+    const tempF = ((tempK - 273.15) * 9/5) + 32;  // Convert Kelvin to Fahrenheit
   const windMph = weather.wind.speed;
   const humidity = weather.main.humidity;
   const iconUrl = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
@@ -160,8 +161,8 @@ function renderCurrentWeather(city, weather) {
   weatherIcon.setAttribute("src", iconUrl);
   weatherIcon.setAttribute("alt", iconDescription);
   heading.append(weatherIcon);
-  tempEl.textContent = `Temp: ${tempF}°F`;
-  windEl.textContent = `Wind: ${windMph} MPH`;
+  tempEl.textContent = `Temp: ${Math.round(tempF)}°F`;
+  windEl.textContent = `Wind: ${Math.round(windMph)} MPH`;
   humidityEl.textContent = `Humidity: ${humidity}%`;
   cardBody.append(heading, tempEl, windEl, humidityEl);
 
@@ -180,7 +181,10 @@ function renderForecast(forecastData) {
 function renderForecastCard(forecast) {
   const iconUrl = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
   const iconDescription = forecast.weather[0].description;
-  const tempF = forecast.main.temp;
+  
+  const tempK = forecast.main.temp; // Get the temp in Kelvin
+  const tempF = (tempK - 273.15) * 9/5 + 32; // Convert Kelvin to Fahrenheit
+  
   const humidity = forecast.main.humidity;
   const windMph = forecast.wind.speed;
 
@@ -205,8 +209,8 @@ function renderForecastCard(forecast) {
   cardTitle.textContent = dayjs(forecast.dt_txt).format("M/D/YYYY");
   weatherIcon.setAttribute("src", iconUrl);
   weatherIcon.setAttribute("alt", iconDescription);
-  tempEl.textContent = `Temp: ${tempF} °F`;
-  windEl.textContent = `Wind: ${windMph} MPH`;
+  tempEl.textContent = `Temp: ${Math.round(tempF)} °F`;
+  windEl.textContent = `Wind: ${Math.round(windMph)} MPH`;
   humidityEl.textContent = `Humidity: ${humidity}%`;
 
   cardBody.append(cardTitle, weatherIcon, tempEl, windEl, humidityEl);
@@ -216,5 +220,5 @@ function renderForecastCard(forecast) {
 }
 
 
-  initSearchHistory();
-  searchForm.addEventListener('submit', handleSearchFormSubmit);
+initSearchHistory();
+searchForm.addEventListener('submit', handleSearchFormSubmit);
