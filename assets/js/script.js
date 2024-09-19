@@ -20,3 +20,28 @@ function fetchWeather() {
     });
 }
 
+// todo: create handleFormSubmit function
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('cityForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevents the default form submission behavior
+  
+      const city = document.getElementById('cityInput').value.trim();
+  
+      if (!city) {
+        alert('Please enter a city name');
+        return;
+      }
+  
+      // Call the searchCity function or perform any search logic
+      searchCity(city);
+    });
+  
+    function searchCity(city) {
+      // Example: Displaying the searched city in a div
+      document.getElementById('searchResults').textContent = `You searched for: ${city}`;
+    }
+  });
+
+// todo: searchApi function
+
+// todo: render function
