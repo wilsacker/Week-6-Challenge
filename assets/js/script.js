@@ -1,9 +1,51 @@
+// Api
 const weatherApiRootUrl = 'https://api.openweathermap.org';
 const weatherApiKey = "0aebe984c0fcc010def3e570e2cb9146"
 
+// search history
+let searchHistory = [];
+const searchInput = document.getElementById('search-input');
+const searchHistoryContainer = document.getElementById('history');
+
+// function to handle search history using local storage
+function appendToHistory(search) {
+    if (searchHistory.indexOf(search) !== -1) {
+      return;
+    }
+    
+    // Add to search history array and update localStorage
+    searchHistory.push(search);
+    localStorage.setItem('search-history', JSON.stringify(searchHistory));
+  
+    // Render updated search history
+    renderSearchHistory();
+  }
+  
+  function initSearchHistory() {
+    const storedHistory = localStorage.getItem('search-history');
+    if (storedHistory) {
+      searchHistory = JSON.parse(storedHistory);
+    }
+    renderSearchHistory();
+  }
+  
+  function renderSearchHistory() {
+    searchHistoryContainer.innerHTML = '';
+  
+    for (let i = searchHistory.length - 1; i >= 0; i--) {
+      const btn = document.createElement('button');
+      btn.setAttribute('type', 'button');
+      btn.setAttribute('aria-controls', 'today forecast');
+      btn.classList.add('history-btn', 'btn-history');
+      btn.setAttribute('data-search', searchHistory[i]);
+      btn.textContent = searchHistory[i];
+      searchHistoryContainer.append(btn);
+    }
+}
+
+// fetch weather for location based on coordinates
 function fetchWeather(location) {
-    let { lat } = location;
-    let { lon } = location;
+    let { lat , lon } = location;
     const cityName = location.name;
 
     const apiUrl = `${weatherApiRootUrl}/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`
@@ -18,6 +60,28 @@ function fetchWeather(location) {
     .catch(function (err) {
       console.error(err);
     });
+}
+
+// get coordinates for location
+function fetchCoords(search) {
+    const apiUrl = `${weatherApiRootUrl}/geo/1.0/direct?q=${search}&limit=5&appid=${weatherApiKey}`;
+  
+    fetch(apiUrl)
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data[0]) {
+          alert('Location not found');
+        } else {
+          // Append to search history and fetch weather for the location
+          appendToHistory(search);
+          fetchWeather(data[0]);
+        }
+      })
+      .catch(function (err) {
+        console.error(err);
+      });
 }
 
 // handle search form submit button
