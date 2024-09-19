@@ -22,10 +22,10 @@ function fetchWeather() {
 
 // todo: create handleFormSubmit function
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('cityForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // Prevents the default form submission behavior
+    document.getElementById('search-form').addEventListener('submit', function(event) {
+      event.preventDefault();
   
-      const city = document.getElementById('cityInput').value.trim();
+      const city = document.getElementById('search-form').value.trim();
   
       if (!city) {
         alert('Please enter a city name');
@@ -35,13 +35,39 @@ document.addEventListener('DOMContentLoaded', function() {
       // Call the searchCity function or perform any search logic
       searchCity(city);
     });
-  
-    function searchCity(city) {
-      // Example: Displaying the searched city in a div
-      document.getElementById('searchResults').textContent = `You searched for: ${city}`;
-    }
   });
 
 // todo: searchApi function
+function searchApi(city) {
+    // Construct the API URL using the city name
+    const apiUrl = `${weatherApiRootUrl}/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`; // 'metric' for Celsius
+  
+    fetch(apiUrl)
+      .then(function (response) {
+          if (!response.ok) {
+              throw new Error('City not found');
+          }
+          return response.json();
+      })
+      .then(function (data) {
+          // Pass the data to the render function
+          renderItems(city, data);
+      })
+      .catch(function (err) {
+          console.error('Error:', err);
+          document.getElementById('current-weather-content').textContent = 'City not found. Please try again.';
+      });
+}
 
 // todo: render function
+function renderItems(city, data) {
+    // Update the current weather content
+    const weatherDetailsEl = document.getElementById('current-weather-content');
+    weatherDetailsEl.innerHTML = `
+      <h3>Weather in ${city}</h3>
+      <p>Temperature: ${data.main.temp} °C</p>
+      <p>Humidity: ${data.main.humidity}%</p>
+      <p>Wind Speed: ${data.wind.speed} m/s</p>
+      <p>Weather: ${data.weather[0].description}</p>
+    `;
+}
