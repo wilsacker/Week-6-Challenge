@@ -9,7 +9,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/css/styles.css" />
-    <title>Weather Dashboard</title>
+    <title>Weather Alert</title>
   </head>
   <body>
     <header class="weather-header bg-info text-white text-center p-3">
@@ -44,8 +44,10 @@
               <i class="fas fa-search"></i> Search
             </button>
           </form>
+          <!-- This is the search history container -->
           <div id="history" class="mt-3"></div>
         </aside>
+
         <!-- Main Content -->
         <main class="col-lg-9">
           <article class="current-weather mb-4" role="main">
@@ -54,9 +56,7 @@
             </header>
             <div id="weather-details">
               <!-- Weather details will be dynamically inserted here -->
-              <p id="current-weather-content">
-                No data yet. Please search for a city.
-              </p>
+              <p id="current-weather-content"></p>
             </div>
           </article>
 
@@ -66,19 +66,14 @@
             </header>
             <div class="forecast-details d-flex justify-content-around">
               <!-- Forecast details will be dynamically inserted here -->
-              <div id="forecast-day1" class="forecast-day">Day 1: No data</div>
-              <div id="forecast-day2" class="forecast-day">Day 2: No data</div>
-              <div id="forecast-day3" class="forecast-day">Day 3: No data</div>
             </div>
           </article>
         </main>
       </div>
-      <div id="history" class="mt-3"></div>
     </div>
 
     <!-- Day.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/dayjs.min.js"></script>
-    <!-- Optional: Timezone and UTC plugins for Day.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/utc.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.4/plugin/timezone.min.js"></script>
     <script src="./assets/js/script.js"></script>

@@ -40,8 +40,8 @@ function initSearchHistory() {
 }
 
 function renderSearchHistory() {
-  console.log("Rendering search history..."); // Check if this prints
-  searchHistoryContainer.innerHTML = "";
+  console.log("Render Search History Called..."); // Check if this prints
+  searchHistoryContainer.innerHTML = " ";
 
   for (let i = searchHistory.length - 1; i >= 0; i--) {
     const btn = document.createElement("button");
@@ -123,7 +123,7 @@ function handleSearchFormSubmit(e) {
 
 function renderItems(city, data) {
     console.log('Rendering weather items for city:', city); // Add this log
-    console.log(data); // Add this to see if the correct data is being passed
+    console.log("data", data); // Add this to see if the correct data is being passed
   // Render current weather
   renderCurrentWeather(city, data.list[0]);
 
@@ -132,6 +132,7 @@ function renderItems(city, data) {
 }
 
 function renderCurrentWeather(city, weather) {
+    console.log('Weather Data:', weather);  // Check if this logs the correct data
   const date = dayjs().format("M/D/YYYY");
   const tempF = weather.main.temp;
   const windMph = weather.wind.speed;
@@ -165,14 +166,15 @@ function renderCurrentWeather(city, weather) {
   humidityEl.textContent = `Humidity: ${humidity}%`;
   cardBody.append(heading, tempEl, windEl, humidityEl);
 
-  todayContainer.innerHTML = "";
+  todayContainer.innerHTML = " ";
   todayContainer.append(card);
 }
 
 function renderForecast(forecastData) {
-  forecastContainer.innerHTML = "";
+  forecastContainer.innerHTML = " ";
   for (let i = 0; i < forecastData.length; i += 8) {
     renderForecastCard(forecastData[i]);
+    console.log("forecastData", forecastData)
   }
 }
 
