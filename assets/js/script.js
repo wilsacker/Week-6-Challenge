@@ -7,6 +7,14 @@ let searchHistory = [];
 const searchInput = document.getElementById('search-input');
 const searchHistoryContainer = document.getElementById('history');
 
+// Forecast containers
+const todayContainer = document.getElementById('today');
+const forecastContainer = document.getElementById('forecast');
+
+// Add timezone plugins to day.js
+dayjs.extend(window.dayjs_plugin_utc);
+dayjs.extend(window.dayjs_plugin_timezone);
+
 // function to handle search history using local storage
 function appendToHistory(search) {
     if (searchHistory.indexOf(search) !== -1) {
@@ -36,7 +44,7 @@ function appendToHistory(search) {
       const btn = document.createElement('button');
       btn.setAttribute('type', 'button');
       btn.setAttribute('aria-controls', 'today forecast');
-      btn.classList.add('history-btn', 'btn-history');
+      btn.classList.add('btn', 'btn-secondary', 'btn-block', 'mb-2', 'btn-history');
       btn.setAttribute('data-search', searchHistory[i]);
       btn.textContent = searchHistory[i];
       searchHistoryContainer.append(btn);
@@ -55,7 +63,7 @@ function fetchWeather(location) {
       return res.json();
     })
     .then(function (data) {
-      renderItems(city, data);
+      renderItems(cityName, data);
     })
     .catch(function (err) {
       console.error(err);
@@ -93,7 +101,8 @@ function handleSearchFormSubmit(e) {
   
     // If there's no input, don't proceed
     if (!search) {
-      return;
+        alert('Please enter a valid city name.');
+        return;
     }
   
     // Fetch coordinates and weather data
@@ -103,29 +112,7 @@ function handleSearchFormSubmit(e) {
     searchInput.value = '';
 }
 
-function searchApi(city) {
-    // Construct the API URL using the city name
-    const apiUrl = `${weatherApiRootUrl}/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`; // 'metric' for Celsius
-  
-    fetch(apiUrl)
-      .then(function (response) {
-          if (!response.ok) {
-              throw new Error('City not found');
-          }
-          return response.json();
-      })
-      .then(function (data) {
-          // Pass the data to the render function
-          renderItems(city, data);
-      })
-      .catch(function (err) {
-          console.error('Error:', err);
-          document.getElementById('current-weather-content').textContent = 'City not found. Please try again.';
-      });
-}
-
-
-function renderItems(city, data) {function renderItems(city, data) {
+function renderItems(city, data) {
     // Render current weather
     renderCurrentWeather(city, data.list[0]);
   
@@ -214,5 +201,10 @@ function renderItems(city, data) {function renderItems(city, data) {
     card.append(cardBody);
     col.append(card);
     forecastContainer.append(col);
-  }
 }
+
+// Initialize search history and attach event listeners
+document.addEventListener('DOMContentLoaded', function () {
+    initSearchHistory();
+    document.getElementById('search-form').addEventListener('submit', handleSearchFormSubmit);
+});
