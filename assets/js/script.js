@@ -1,16 +1,18 @@
-// Api
+
+//Global Variables
+let searchHistory = [];
 const weatherApiRootUrl = "https://api.openweathermap.org";
 const weatherApiKey = "0aebe984c0fcc010def3e570e2cb9146";
 
-// search history
-let searchHistory = [];
+//DOM ELEMENTS
 const searchInput = document.getElementById("search-input");
-const searchHistoryContainer = document.getElementById("history");
-console.log(searchHistoryContainer); // Make sure this isn't null
-
-// Forecast containers
+const searchForm = document.getElementById("search-form")
 const todayContainer = document.getElementById("today");
 const forecastContainer = document.getElementById("forecast");
+const searchHistoryContainer = document.getElementById("history");
+//console.log(searchHistoryContainer); // Make sure this isn't null
+
+
 
 // Add timezone plugins to day.js
 dayjs.extend(window.dayjs_plugin_utc);
@@ -34,13 +36,13 @@ function initSearchHistory() {
   const storedHistory = localStorage.getItem("search-history");
   if (storedHistory) {
     searchHistory = JSON.parse(storedHistory);
-    console.log("Stored history:", searchHistory); // Check if the history is retrieved properly
+    //console.log("Stored history:", searchHistory); // Check if the history is retrieved properly
   }
   renderSearchHistory();
 }
 
 function renderSearchHistory() {
-  console.log("Render Search History Called..."); // Check if this prints
+  //console.log("Render Search History Called..."); // Check if this prints
   searchHistoryContainer.innerHTML = " ";
 
   for (let i = searchHistory.length - 1; i >= 0; i--) {
@@ -62,8 +64,11 @@ function renderSearchHistory() {
 
 // fetch weather for location based on coordinates
 function fetchWeather(location) {
-  let { lat, lon } = location;
-  const cityName = location.name;
+    
+    const cityName = location.name;
+    const { lat, lon } = location;
+
+    //console.log("LOCATION COORD", lat, lon, cityName)
 
   const apiUrl = `${weatherApiRootUrl}/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${weatherApiKey}`;
 
@@ -76,7 +81,7 @@ function fetchWeather(location) {
     })
     .catch(function (err) {
       console.error(err);
-    });
+    });  
 }
 
 // get coordinates for location
@@ -100,39 +105,33 @@ function fetchCoords(search) {
       console.error(err);
     });
 }
+    
 
 // handle search form submit button
 function handleSearchFormSubmit(e) {
-  e.preventDefault();
-
-  // Get the search term from the input
-  const search = searchInput.value.trim();
-
-  // If there's no input, don't proceed
-  if (!search) {
-    alert("Please enter a valid city name.");
-    return;
-  }
-
-  // Fetch coordinates and weather data
-  fetchCoords(search);
-
-  // Clear the input field
-  searchInput.value = "";
+    e.preventDefault();
+    const search = searchInput.value.trim();
+    
+    if (!search){
+        alert("Please enter a valid city name.");
+        return;
+    }
+    fetchCoords(search);
+    searchInput.value = " ";
 }
 
 function renderItems(city, data) {
-    console.log('Rendering weather items for city:', city); // Add this log
+    
     console.log("data", data); // Add this to see if the correct data is being passed
-  // Render current weather
-  renderCurrentWeather(city, data.list[0]);
+    // Render current weather
+    renderCurrentWeather(city, data.list[0]);
 
-  // Render 5-day forecast
-  renderForecast(data.list);
+    // Render 5-day forecast
+    renderForecast(data.list);
 }
 
 function renderCurrentWeather(city, weather) {
-    console.log('Weather Data:', weather);  // Check if this logs the correct data
+    //console.log('Weather Data:', weather);  // Check if this logs the correct data
   const date = dayjs().format("M/D/YYYY");
   const tempF = weather.main.temp;
   const windMph = weather.wind.speed;
@@ -216,10 +215,6 @@ function renderForecastCard(forecast) {
   forecastContainer.append(col);
 }
 
-// Initialize search history and attach event listeners
-document.addEventListener("DOMContentLoaded", function () {
+
   initSearchHistory();
-  document
-    .getElementById("search-form")
-    .addEventListener("submit", handleSearchFormSubmit);
-});
+  searchForm.addEventListener('submit', handleSearchFormSubmit);
