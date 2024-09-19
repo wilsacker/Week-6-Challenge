@@ -137,10 +137,15 @@ function renderItems(city, data) {
 }
 
 function renderCurrentWeather(city, weather) {
-    //console.log('Weather Data:', weather);  // Check if this logs the correct data
-    const date = dayjs().format("M/D/YYYY");
-    const tempK = weather.main.temp; // Get temp in Kelvin
-    const tempF = ((tempK - 273.15) * 9/5) + 32;  // Convert Kelvin to Fahrenheit
+  //console.log('Weather Data:', weather);  // Check if this logs the correct data
+
+  // Make the "Today's Weather" title visible
+  const todayTitle = document.getElementById('today-title');
+  todayTitle.classList.remove('hidden');
+
+  const date = dayjs().format("M/D/YYYY");
+  const tempK = weather.main.temp; // Get temp in Kelvin
+  const tempF = ((tempK - 273.15) * 9/5) + 32;  // Convert Kelvin to Fahrenheit
   const windMph = weather.wind.speed;
   const humidity = weather.main.humidity;
   const iconUrl = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
@@ -177,6 +182,10 @@ function renderCurrentWeather(city, weather) {
 }
 
 function renderForecast(forecastData) {
+  // Make the "Upcoming Forecast" title visible
+  const forecastTitle = document.getElementById('forecast-title');
+  forecastTitle.classList.remove('hidden');
+
   forecastContainer.innerHTML = " ";
   for (let i = 0; i < forecastData.length; i += 8) {
     renderForecastCard(forecastData[i]);

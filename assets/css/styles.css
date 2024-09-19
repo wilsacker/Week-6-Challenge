@@ -1,0 +1,8 @@
+.weather-header {
+    background: linear-gradient(90deg, #3360B9, #20084A); /* Horizontal gradient with two colors */
+    color: white;
+  }
+
+.hidden {
+    visibility: hidden;
+}
