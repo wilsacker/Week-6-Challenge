@@ -1,7 +1,7 @@
 const weatherApiRootUrl = 'https://api.openweathermap.org';
 const weatherApiKey = "0aebe984c0fcc010def3e570e2cb9146"
 
-function fetchWeather() {
+function fetchWeather(location) {
     let { lat } = location;
     let { lon } = location;
     const cityName = location.name;
@@ -20,24 +20,25 @@ function fetchWeather() {
     });
 }
 
-// todo: create handleFormSubmit function
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('search-form').addEventListener('submit', function(event) {
-      event.preventDefault();
+// handle search form submit button
+function handleSearchFormSubmit(e) {
+    e.preventDefault();
   
-      const city = document.getElementById('search-form').value.trim();
+    // Get the search term from the input
+    const search = searchInput.value.trim();
   
-      if (!city) {
-        alert('Please enter a city name');
-        return;
-      }
+    // If there's no input, don't proceed
+    if (!search) {
+      return;
+    }
   
-      // Call the searchCity function or perform any search logic
-      searchCity(city);
-    });
-  });
+    // Fetch coordinates and weather data
+    fetchCoords(search);
+  
+    // Clear the input field
+    searchInput.value = '';
+}
 
-// todo: searchApi function
 function searchApi(city) {
     // Construct the API URL using the city name
     const apiUrl = `${weatherApiRootUrl}/data/2.5/weather?q=${city}&appid=${weatherApiKey}&units=metric`; // 'metric' for Celsius
@@ -59,41 +60,95 @@ function searchApi(city) {
       });
 }
 
-// todo: render function
-function renderItems(city, data) {
-    // Clear any previous content
-    const weatherDetailsEl = document.getElementById('current-weather-content');
-    weatherDetailsEl.innerHTML = '';
 
-    // Create a container div for the weather details
-    const resultCard = document.createElement('div');
-    resultCard.classList.add('card', 'bg-light', 'text-dark', 'mb-3', 'p-3');
-
-    // Create a header for the city name
-    const titleEl = document.createElement('h3');
-    titleEl.textContent = `Weather in ${city}`;
-    resultCard.appendChild(titleEl);
-
-    // Create and append a paragraph element for temperature
+function renderItems(city, data) {function renderItems(city, data) {
+    // Render current weather
+    renderCurrentWeather(city, data.list[0]);
+  
+    // Render 5-day forecast
+    renderForecast(data.list);
+  }
+  
+  function renderCurrentWeather(city, weather) {
+    const date = dayjs().format('M/D/YYYY');
+    const tempF = weather.main.temp;
+    const windMph = weather.wind.speed;
+    const humidity = weather.main.humidity;
+    const iconUrl = `https://openweathermap.org/img/w/${weather.weather[0].icon}.png`;
+    const iconDescription = weather.weather[0].description;
+  
+    const card = document.createElement('div');
+    const cardBody = document.createElement('div');
+    const heading = document.createElement('h2');
+    const weatherIcon = document.createElement('img');
     const tempEl = document.createElement('p');
-    tempEl.innerHTML = `<strong>Temperature:</strong> ${data.main.temp} °C`;
-    resultCard.appendChild(tempEl);
-
-    // Create and append a paragraph element for humidity
+    const windEl = document.createElement('p');
     const humidityEl = document.createElement('p');
-    humidityEl.innerHTML = `<strong>Humidity:</strong> ${data.main.humidity}%`;
-    resultCard.appendChild(humidityEl);
-
-    // Create and append a paragraph element for wind speed
-    const windSpeedEl = document.createElement('p');
-    windSpeedEl.innerHTML = `<strong>Wind Speed:</strong> ${data.wind.speed} m/s`;
-    resultCard.appendChild(windSpeedEl);
-
-    // Create and append a paragraph element for weather description
-    const weatherDescriptionEl = document.createElement('p');
-    weatherDescriptionEl.innerHTML = `<strong>Weather:</strong> ${data.weather[0].description}`;
-    resultCard.appendChild(weatherDescriptionEl);
-
-    // Append the result card to the weather details container
-    weatherDetailsEl.appendChild(resultCard);
+  
+    card.setAttribute('class', 'card');
+    cardBody.setAttribute('class', 'card-body');
+    card.append(cardBody);
+  
+    heading.setAttribute('class', 'h3 card-title');
+    tempEl.setAttribute('class', 'card-text');
+    windEl.setAttribute('class', 'card-text');
+    humidityEl.setAttribute('class', 'card-text');
+  
+    heading.textContent = `${city} (${date})`;
+    weatherIcon.setAttribute('src', iconUrl);
+    weatherIcon.setAttribute('alt', iconDescription);
+    heading.append(weatherIcon);
+    tempEl.textContent = `Temp: ${tempF}°F`;
+    windEl.textContent = `Wind: ${windMph} MPH`;
+    humidityEl.textContent = `Humidity: ${humidity}%`;
+    cardBody.append(heading, tempEl, windEl, humidityEl);
+  
+    todayContainer.innerHTML = '';
+    todayContainer.append(card);
+  }
+  
+  function renderForecast(forecastData) {
+    forecastContainer.innerHTML = '';
+    for (let i = 0; i < forecastData.length; i += 8) {
+      renderForecastCard(forecastData[i]);
+    }
+  }
+  
+  function renderForecastCard(forecast) {
+    const iconUrl = `https://openweathermap.org/img/w/${forecast.weather[0].icon}.png`;
+    const iconDescription = forecast.weather[0].description;
+    const tempF = forecast.main.temp;
+    const humidity = forecast.main.humidity;
+    const windMph = forecast.wind.speed;
+  
+    const col = document.createElement('div');
+    const card = document.createElement('div');
+    const cardBody = document.createElement('div');
+    const cardTitle = document.createElement('h5');
+    const weatherIcon = document.createElement('img');
+    const tempEl = document.createElement('p');
+    const windEl = document.createElement('p');
+    const humidityEl = document.createElement('p');
+  
+    col.setAttribute('class', 'col-md');
+    col.classList.add('five-day-card');
+    card.setAttribute('class', 'card bg-primary h-100 text-white');
+    cardBody.setAttribute('class', 'card-body p-2');
+    cardTitle.setAttribute('class', 'card-title');
+    tempEl.setAttribute('class', 'card-text');
+    windEl.setAttribute('class', 'card-text');
+    humidityEl.setAttribute('class', 'card-text');
+  
+    cardTitle.textContent = dayjs(forecast.dt_txt).format('M/D/YYYY');
+    weatherIcon.setAttribute('src', iconUrl);
+    weatherIcon.setAttribute('alt', iconDescription);
+    tempEl.textContent = `Temp: ${tempF} °F`;
+    windEl.textContent = `Wind: ${windMph} MPH`;
+    humidityEl.textContent = `Humidity: ${humidity}%`;
+  
+    cardBody.append(cardTitle, weatherIcon, tempEl, windEl, humidityEl);
+    card.append(cardBody);
+    col.append(card);
+    forecastContainer.append(col);
+  }
 }
