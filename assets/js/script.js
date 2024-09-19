@@ -61,13 +61,39 @@ function searchApi(city) {
 
 // todo: render function
 function renderItems(city, data) {
-    // Update the current weather content
+    // Clear any previous content
     const weatherDetailsEl = document.getElementById('current-weather-content');
-    weatherDetailsEl.innerHTML = `
-      <h3>Weather in ${city}</h3>
-      <p>Temperature: ${data.main.temp} °C</p>
-      <p>Humidity: ${data.main.humidity}%</p>
-      <p>Wind Speed: ${data.wind.speed} m/s</p>
-      <p>Weather: ${data.weather[0].description}</p>
-    `;
+    weatherDetailsEl.innerHTML = '';
+
+    // Create a container div for the weather details
+    const resultCard = document.createElement('div');
+    resultCard.classList.add('card', 'bg-light', 'text-dark', 'mb-3', 'p-3');
+
+    // Create a header for the city name
+    const titleEl = document.createElement('h3');
+    titleEl.textContent = `Weather in ${city}`;
+    resultCard.appendChild(titleEl);
+
+    // Create and append a paragraph element for temperature
+    const tempEl = document.createElement('p');
+    tempEl.innerHTML = `<strong>Temperature:</strong> ${data.main.temp} °C`;
+    resultCard.appendChild(tempEl);
+
+    // Create and append a paragraph element for humidity
+    const humidityEl = document.createElement('p');
+    humidityEl.innerHTML = `<strong>Humidity:</strong> ${data.main.humidity}%`;
+    resultCard.appendChild(humidityEl);
+
+    // Create and append a paragraph element for wind speed
+    const windSpeedEl = document.createElement('p');
+    windSpeedEl.innerHTML = `<strong>Wind Speed:</strong> ${data.wind.speed} m/s`;
+    resultCard.appendChild(windSpeedEl);
+
+    // Create and append a paragraph element for weather description
+    const weatherDescriptionEl = document.createElement('p');
+    weatherDescriptionEl.innerHTML = `<strong>Weather:</strong> ${data.weather[0].description}`;
+    resultCard.appendChild(weatherDescriptionEl);
+
+    // Append the result card to the weather details container
+    weatherDetailsEl.appendChild(resultCard);
 }
