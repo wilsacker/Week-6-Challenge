@@ -58,6 +58,12 @@ function renderSearchHistory() {
     );
     btn.setAttribute("data-search", searchHistory[i]);
     btn.textContent = searchHistory[i];
+
+    btn.addEventListener("click", function(event) {
+      const city = event.target.getAttribute("data-search");
+      fetchCoords(city); // Fetch the coordinates and weather data for the selected city
+    });
+
     searchHistoryContainer.append(btn);
   }
 }
